@@ -37,7 +37,6 @@ def product(*args: Sequence, stop = True) -> Iterator[tuple]:
 
     >>> list(product([0, 1], [0, 1, 2], [0, 1]))
     [(0, 0, 0), (1, 1, 1), (0, 2, 0), (1, 0, 1), (0, 1, 0), (1, 2, 1), (0, 0, 1), (1, 1, 0), (0, 2, 1), (1, 0, 0), (0, 1, 1), (1, 2, 0)]
-
     """
     if len(args) == 1:
         # Only one iterable, simply yield the values from that iterable
