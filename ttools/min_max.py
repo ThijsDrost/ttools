@@ -1,6 +1,10 @@
-from typing import Callable, Sequence, Iterable, Generator, Any
+from typing import Callable, Sequence, Iterable, Generator, Any, TypeVar
+from ._protecols import SupportsAllComparisonT
 
-def _none_key[T](key: Callable[[T], Any], default: T) -> Callable[[T], Any]:
+T = TypeVar("T")
+S = TypeVar("S")
+
+def _none_key(key: Callable[[T], Any], default: T) -> Callable[[T], SupportsAllComparisonT]:
     if key is None:
         def new_key(x):
             if x is None:
@@ -14,7 +18,7 @@ def _none_key[T](key: Callable[[T], Any], default: T) -> Callable[[T], Any]:
     return new_key
 
 
-def _none_yielder[T, S](values: Iterable[T], key: Callable[[T], S], default: T) -> Generator[T | S, None, None]:
+def _none_yielder(values: Iterable[T], key: Callable[[T], S], default: T) -> Generator[T | S, None, None]:
     if key is None:
         for val in values:
             if val is None:
@@ -29,7 +33,7 @@ def _none_yielder[T, S](values: Iterable[T], key: Callable[[T], S], default: T) 
                 yield key(val)
 
 
-def arg_none_max[T](values: Sequence[T], *, key: Callable[[T], Any] = None) -> int | None:
+def arg_none_max(values: Sequence[T], *, key: Callable[[T], SupportsAllComparisonT] = None) -> int | None:
     """
     Returns the first index of the minimum value in the sequence, using the build-in `min` function, while ignoring None values.
 
@@ -49,7 +53,7 @@ def arg_none_max[T](values: Sequence[T], *, key: Callable[[T], Any] = None) -> i
     return _arg_none_minmax(max, values, float('-inf'), key=key)
 
 
-def arg_none_min[T](values: Sequence[T], *, key: Callable[[T], Any] = None) -> int | None:
+def arg_none_min(values: Sequence[T], *, key: Callable[[T], Any] = None) -> int | None:
     """
     Returns the first index of the minimum value in the sequence, using the build-in `min` function, while ignoring None values.
 
@@ -69,7 +73,7 @@ def arg_none_min[T](values: Sequence[T], *, key: Callable[[T], Any] = None) -> i
     return _arg_none_minmax(min, values, float('inf'), key=key)
 
 
-def _arg_none_minmax[T](func: callable, values: Iterable[T], default: T, *, key: Callable[[T], Any] = None) -> int | None:
+def _arg_none_minmax(func: callable, values: Iterable[T], default: T, *, key: Callable[[T], SupportsAllComparisonT] = None) -> int | None:
     if not isinstance(values, Iterable):
         raise ValueError("`values` must be an iterable")
 
@@ -99,7 +103,7 @@ def _arg_none_minmax[T](func: callable, values: Iterable[T], default: T, *, key:
         return index
 
 
-def arg_max[T](values: Sequence[T], *, key: Callable[[T], Any] = None) -> int:
+def arg_max(values: Sequence[T], *, key: Callable[[T], SupportsAllComparisonT] = None) -> int:
     """
     Returns the first index of the minimum value in the sequence, using the build-in `min` function.
 
@@ -114,7 +118,7 @@ def arg_max[T](values: Sequence[T], *, key: Callable[[T], Any] = None) -> int:
     return _argfunc(max, values, key=key)
 
 
-def arg_min[T](values: Sequence[T], *, key: Callable[[T], Any] = None) -> int:
+def arg_min(values: Sequence[T], *, key: Callable[[T], SupportsAllComparisonT] = None) -> int:
     """
     Returns the first index of the minimum value in the sequence, using the build-in `min` function.
 
@@ -163,7 +167,7 @@ def _argfunc[T](func: callable, values: Iterable[T], *, key: Callable[[T], Any] 
         raise TypeError('`values` should be an iterable or a sequence')
 
 
-def _none_minmax[T](func: callable, values: Sequence[T], default: T, *, key: Callable[[T], Any] = None) -> int | None:
+def _none_minmax(func: callable, values: Sequence[T], default: T, *, key: Callable[[T], SupportsAllComparisonT] = None) -> int | None:
     if not isinstance(values, Iterable):
         raise TypeError('`values` should be a iterable')
     yielder = _none_yielder(values, key, default)
@@ -176,7 +180,7 @@ def _none_minmax[T](func: callable, values: Sequence[T], default: T, *, key: Cal
     return res
 
 
-def none_min[T](values: Sequence[T], *, key: Callable[[T], Any] = None) -> T | None:
+def none_min(values: Sequence[T], *, key: Callable[[T], SupportsAllComparisonT] = None) -> T | None:
     """
     Returns the minimum value in the sequence, ignoring None values.
 
