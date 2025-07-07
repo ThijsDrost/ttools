@@ -13,7 +13,7 @@ def flatten_2D[T](value: Iterable[Iterable[Any]], /) -> list[Any]:
 
 def flatten_iter(value: Iterable, /) -> Iterable:
     """
-    Flatten a arbitrary depth iterator
+    Flatten an arbitrary depth iterator
     """
     for item in value:
         if isinstance(item, Iterable):
@@ -24,7 +24,7 @@ def flatten_iter(value: Iterable, /) -> Iterable:
 
 def flatten(value: Iterable, /) -> list:
     """
-    Flatten a arbitrary depth iterator
+    Flatten an arbitrary depth iterator
     """
     return list(flatten_iter(value))
 
