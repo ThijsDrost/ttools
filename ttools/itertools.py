@@ -45,6 +45,8 @@ def product(*args: Sequence, stop = True) -> Iterator[tuple]:
         args_len = len(args[0])
         while True:
             yield args[0][index],  # Comma to make it a tuple
+            if stop and index == args_len - 1:
+                raise StopIteration
             index = (index + 1) % args_len
     else:
         # More than one iterable, get the generator for the combinations of the first n-1 iterables
