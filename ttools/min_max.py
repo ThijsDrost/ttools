@@ -145,13 +145,14 @@ def _argfunc[T](func: callable, values: Iterable[T], *, key: Callable[[T], Any] 
     elif isinstance(values, Sequence):
         return func(range(len(values)), key=values.__getitem__)
     elif isinstance(values, Iterable):
+        values_iter = iter(values)
         try:
-            max_val = next(values)
+            max_val = next(values_iter)
         except StopIteration:
             raise ValueError("`values` should be non-empty")
 
         max_idx = 0
-        for index, val in enumerate(values, start=1):
+        for index, val in enumerate(values_iter, start=1):
             if val is None:
                 continue
             if func(max_val, val) != max_val:
