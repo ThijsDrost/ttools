@@ -6,10 +6,38 @@ import operator
 import numpy as np
 
 
-def _combinations(*args: Sequence) -> Iterator[tuple]:
+def product(*args: Sequence, stop = True) -> Iterator[tuple]:
     """
-    Create a generator that yields all the combinations of the given iterables. The generator will loop through the iterables
-    simultaneously, loops back to the beginning when all possibilities have been yielded, thus it never stops.
+    Create a generator that yields all the combinations of the given iterables.
+
+    Parameters
+    ----------
+    args:  Sequence
+        The sequences to combine.
+    stop: bool
+        When true, the iterator loops back to the beginning when all possibilities have been yielded, thus it never stops.
+        When false, it will raise a StopIteration exception when all possibilities have been yielded.
+
+    Yields
+    ------
+    tuple
+        A tuple containing one element from each of the input sequences, in a specific order.
+
+    Notes
+    -----
+    It will return the same cartesian product as :external+python:py:func:`itertools.product`, but in a different order.
+
+    Examples
+    --------
+    >>> list(product([0, 1, 2], [0, 1, 2]))
+    [(0, 0), (1, 1), (2, 2), (0, 1), (1, 2), (2, 0), (0, 2), (1, 0), (2, 1)]
+
+    >>> list(product([0, 1], [0, 1, 2]))
+    [(0, 0), (1, 1), (0, 2), (1, 0), (0, 1), (1, 2)]
+
+    >>> list(product([0, 1], [0, 1, 2], [0, 1]))
+    [(0, 0, 0), (1, 1, 1), (0, 2, 0), (1, 0, 1), (0, 1, 0), (1, 2, 1), (0, 0, 1), (1, 1, 0), (0, 2, 1), (1, 0, 0), (0, 1, 1), (1, 2, 0)]
+
     """
     if len(args) == 1:
         # Only one iterable, simply yield the values from that iterable
@@ -20,7 +48,7 @@ def _combinations(*args: Sequence) -> Iterator[tuple]:
             index = (index + 1) % args_len
     else:
         # More than one iterable, get the generator for the combinations of the first n-1 iterables
-        iterator = _combinations(*args[:-1])
+        iterator = product(*args[:-1], stop=False)
         first_iterator_len = functools.reduce(operator.mul, map(len, args[:-1]))
 
         # The number of iterations before values are repeated (when nothing is done to fix this)
@@ -42,41 +70,10 @@ def _combinations(*args: Sequence) -> Iterator[tuple]:
                 index = start
 
             if iters == reset_val:
+                if stop:
+                    raise StopIteration
                 # We have looped through all the unique combinations, so we need to reset to the start
                 index, start, iters = 0, 0, 0
-
-
-def product(*args: Sequence) -> Iterator[tuple]:
-    """
-    Create a generator that yields all the combinations of the given iterables. The generator will loop through the iterables
-    simultaneously, until all combinations are exhausted.
-
-    Parameters
-    ----------
-    args: Sequence
-        The sequences to combine.
-
-    Notes
-    -----
-    It will return the same cartesian product as :external+python:py:func:`itertools.product`, but in a different order.
-
-    Examples
-    --------
-    >>> list(product([0, 1, 2], [0, 1, 2]))
-    [(0, 0), (1, 1), (2, 2), (0, 1), (1, 2), (2, 0), (0, 2), (1, 0), (2, 1)]
-
-    >>> list(product([0, 1], [0, 1, 2]))
-    [(0, 0), (1, 1), (0, 2), (1, 0), (0, 1), (1, 2)]
-
-    >>> list(product([0, 1], [0, 1, 2], [0, 1]))
-    [(0, 0, 0), (1, 1, 1), (0, 2, 0), (1, 0, 1), (0, 1, 0), (1, 2, 1), (0, 0, 1), (1, 1, 0), (0, 2, 1), (1, 0, 0), (0, 1, 1), (1, 2, 0)]
-    """
-    value = 1
-    for arg in args:
-        value *= len(arg)
-    iterator = _combinations(*args)
-    for i in range(value):
-        yield next(iterator)
 
 
 def product3[S, T, U](iterable1: Sequence[S], iterable2: Sequence[T], iterable3: Sequence[U]) -> Iterator[tuple[S, T, U]]:
@@ -84,7 +81,7 @@ def product3[S, T, U](iterable1: Sequence[S], iterable2: Sequence[T], iterable3:
     Create a generator that yields the combinations of three iterables. The generator will loop through the iterables simultaneously,
     until all combinations are exhausted. This is a special case of :py:func:`product`.
     """
-    yield from product(iterable1, iterable2, iterable3)
+    yield from product(iterable1, iterable2, iterable3, stop = True)
 
 
 def product2[S, T](iterable1: Sequence[S], iterable2: Sequence[T]) -> Iterator[tuple[S, T]]:
@@ -92,7 +89,7 @@ def product2[S, T](iterable1: Sequence[S], iterable2: Sequence[T]) -> Iterator[t
     Create a generator that yields the combinations of two iterables. The generator will loop through the iterables simultaneously,
     until all combinations are exhausted. This is a special case of :py:func:`product`.
     """
-    yield from product(iterable1, iterable2)
+    yield from product(iterable1, iterable2, stop = True)
 
 
 if __name__ == '__main__':
