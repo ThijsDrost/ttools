@@ -5,6 +5,10 @@ T = TypeVar("T")
 S = TypeVar("S")
 
 def _none_key(key: Callable[[T], Any], default: T) -> Callable[[T], SupportsAllComparisonT]:
+    """
+    Creates a new key function that returns a default value if the input is None, the original value (with the key
+    applied if given) otherwise.
+    """
     if key is None:
         def new_key(x):
             if x is None:
@@ -19,6 +23,9 @@ def _none_key(key: Callable[[T], Any], default: T) -> Callable[[T], SupportsAllC
 
 
 def _none_yielder(values: Iterable[T], key: Callable[[T], S], default: T) -> Generator[T | S, None, None]:
+    """
+    Yields values from the iterable, applying a key function if provided, while replacing None values with a default value.
+    """
     if key is None:
         for val in values:
             if val is None:
