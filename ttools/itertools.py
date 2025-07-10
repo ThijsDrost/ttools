@@ -97,21 +97,29 @@ def sim_product(*args: Sequence, stop=True) -> Iterator[tuple]:
                 # We have looped through all the unique combinations, so we need to reset to the start
                 index, start, iters = 0, 0, 0
 
+def sim_product_list(*args: Sequence, num: int = None) -> list[tuple]:
+    """
+    Create a list of all the combinations of the given iterables. Uses `sim_product` to generate the combinations.
 
-def product3[S, T, U](iterable1: Sequence[S], iterable2: Sequence[T], iterable3: Sequence[U]) -> Iterator[tuple[S, T, U]]:
-    """
-    Create a generator that yields the combinations of three iterables. The generator will loop through the iterables simultaneously,
-    until all combinations are exhausted. This is a special case of :py:func:`product`.
-    """
-    yield from product(iterable1, iterable2, iterable3, stop = True)
+    Parameters
+    ----------
+    args:  Sequence
+        The sequences to combine.
+    num: int, optional
+        The number of elements to generate. If None, it will generate all combinations. If num is larger that the number
+        of unique combinations, the list will contain non-unique combinations.
 
-
-def product2[S, T](iterable1: Sequence[S], iterable2: Sequence[T]) -> Iterator[tuple[S, T]]:
+    Returns
+    -------
+    list[tuple]
+        A list containing tuples with one element from each of the input sequences, in a specific order.
     """
-    Create a generator that yields the combinations of two iterables. The generator will loop through the iterables simultaneously,
-    until all combinations are exhausted. This is a special case of :py:func:`product`.
-    """
-    yield from product(iterable1, iterable2, stop = True)
+    if num is None:
+        return list(sim_product(*args, stop=True))
+    if not isinstance(num, int) or num < 1:
+        raise ValueError(f'`num` should be a positive integer or None, got {num}')
+    iterator = sim_product(*args, stop=False)
+    return [tuple(next(iterator)) for _ in range(num)]
 
 
 if __name__ == '__main__':
