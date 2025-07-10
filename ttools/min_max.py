@@ -145,7 +145,7 @@ def arg_min(values: Sequence[T], *, key: Callable[[T], SupportsAllComparisonT] =
     return _argfunc(min, values, key=key)
 
 
-def _argfunc[T](func: callable, values: Iterable[T], *, key: Callable[[T], Any] = None) -> int:
+def _argfunc(func: callable, values: Iterable[T], *, key: Callable[[T], SupportsAllComparisonT] = None) -> int:
     if not isinstance(values, Iterable):
         raise TypeError('`values` should be an iterable')
     if isinstance(values, Sequence) and len(values) == 0:
