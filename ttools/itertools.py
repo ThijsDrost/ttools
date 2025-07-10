@@ -1,12 +1,33 @@
 import math
-from typing import Sequence, Iterator
+from typing import Sequence, Iterator, overload, Any
 import functools
 import operator
 
 import numpy as np
 
 
-def product(*args: Sequence, stop = True) -> Iterator[tuple]:
+@overload
+def sim_product[S, T, U, V, W](iterable1: Sequence[S], iterable2: Sequence[T], iterable3: Sequence[U], iterable4: Sequence[V], iterable5: Sequence[W], *, stop: bool = True) -> Iterator[tuple[S, T, U, V, W]]:
+    ...
+
+@overload
+def sim_product[S, T, U, V](iterable1: Sequence[S], iterable2: Sequence[T], iterable3: Sequence[U], iterable4: Sequence[V], *, stop: bool = True) -> Iterator[tuple[S, T, U, V]]:
+    ...
+
+@overload
+def sim_product[S, T, U](iterable1: Sequence[S], iterable2: Sequence[T], iterable3: Sequence[U], *, stop: bool = True) -> Iterator[tuple[S, T, U]]:
+    ...
+
+@overload
+def sim_product[S, T](iterable1: Sequence[S], iterable2: Sequence[T], *, stop: bool = True) -> Iterator[tuple[S, T]]:
+    ...
+
+@overload
+def sim_product[S](iterable1: Sequence[S], *, stop: bool = True) -> Iterator[tuple[S,]]:
+    ...
+
+
+def sim_product(*args: Sequence, stop=True) -> Iterator[tuple]:
     """
     Create a generator that yields all the combinations of the given iterables.
 
@@ -29,13 +50,13 @@ def product(*args: Sequence, stop = True) -> Iterator[tuple]:
 
     Examples
     --------
-    >>> list(product([0, 1, 2], [0, 1, 2]))
+    >>> list(sim_product([0, 1, 2], [0, 1, 2]))
     [(0, 0), (1, 1), (2, 2), (0, 1), (1, 2), (2, 0), (0, 2), (1, 0), (2, 1)]
 
-    >>> list(product([0, 1], [0, 1, 2]))
+    >>> list(sim_product([0, 1], [0, 1, 2]))
     [(0, 0), (1, 1), (0, 2), (1, 0), (0, 1), (1, 2)]
 
-    >>> list(product([0, 1], [0, 1, 2], [0, 1]))
+    >>> list(sim_product([0, 1], [0, 1, 2], [0, 1]))
     [(0, 0, 0), (1, 1, 1), (0, 2, 0), (1, 0, 1), (0, 1, 0), (1, 2, 1), (0, 0, 1), (1, 1, 0), (0, 2, 1), (1, 0, 0), (0, 1, 1), (1, 2, 0)]
     """
     if len(args) == 1:
@@ -49,7 +70,7 @@ def product(*args: Sequence, stop = True) -> Iterator[tuple]:
             index = (index + 1) % args_len
     else:
         # More than one iterable, get the generator for the combinations of the first n-1 iterables
-        iterator = product(*args[:-1], stop=False)
+        iterator = sim_product(*args[:-1], stop=False)
         first_iterator_len = functools.reduce(operator.mul, map(len, args[:-1]))
 
         # The number of iterations before values are repeated (when nothing is done to fix this)
@@ -100,7 +121,7 @@ if __name__ == '__main__':
         for j in range(1, num):
             for k in range(1, num):
                 try:
-                    result = set(product(np.arange(i), np.arange(j), np.arange(k)))
+                    result = set(sim_product(np.arange(i), np.arange(j), np.arange(k)))
                 except Exception as e:
                     raise Exception(f"Error: {i}, {j}, {k}") from e
                 if len(result) != i * j * k:
