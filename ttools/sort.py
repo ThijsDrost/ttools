@@ -16,7 +16,11 @@ def sort_together(sorter: Iterable[SupportsRichComparisonT], *others: Iterable, 
     else:
         key_sorter = lambda x: x[0]
     try:
-        sorted_values = sorted(zip(sorter, *others, strict=True), key=key_sorter, reverse=reverse)
+        zipped = zip(sorter, *others, strict=True)
     except ValueError as e:
-        raise ValueError('The lengths of the lists must be the same.') from e
+        raise ValueError('Could not zip the sequences together. Ensure they are of the same length.') from e
+    try:
+        sorted_values = sorted(zipped, key=key_sorter, reverse=reverse)
+    except ValueError as e:
+        raise ValueError('Could not sort the values.') from e
     return tuple(zip(*sorted_values))
