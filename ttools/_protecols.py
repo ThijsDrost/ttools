@@ -1,5 +1,6 @@
 from typing import Protocol, Any, TypeVar
 
+
 class Addable[T](Protocol):
     def __add__(self: T, other: T) -> T: ...
 
@@ -14,6 +15,7 @@ class SupportsAllComparison(Addable, Protocol):
     def __ge__(self, other: Any) -> bool: ...
     def __eq__(self, other: Any) -> bool: ...
     def __ne__(self, other: Any) -> bool: ...
+
 
 SupportsRichComparisonT = TypeVar("SupportsRichComparisonT", bound=SupportsRichComparison)
 SupportsAllComparisonT = TypeVar("SupportsAllComparisonT", bound=SupportsAllComparison)

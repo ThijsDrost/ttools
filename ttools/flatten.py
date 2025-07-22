@@ -5,6 +5,7 @@ import math
 
 from _protecols import Addable
 
+
 def flatten_2D(value: Iterable[Iterable[Any]], /) -> list[Any]:
     """
     Flatten an iterator of iterators
@@ -29,7 +30,7 @@ def flatten_iter(value: Iterable, /, *, max_dept=math.inf) -> Iterable:
 
     for item in value:
         if isinstance(item, Iterable):
-            yield from flatten_iter(item, max_dept=max_dept-1)
+            yield from flatten_iter(item, max_dept=max_dept - 1)
         else:
             yield item
 
@@ -56,14 +57,18 @@ def transpose(iterable: Iterable[Iterable[Any]], /) -> list[list[Any]]:
 
 
 @overload
-def dot(vec1: Iterable[float], vec2: Iterable[float]) -> float:
-    ...
+def dot(vec1: Iterable[float], vec2: Iterable[float]) -> float: ...
+
 
 @overload
-def dot[T: Addable](vec1: Iterable[T], vec2: Iterable[T]) -> T:
-    ...
+def dot[T: Addable](vec1: Iterable[T], vec2: Iterable[T]) -> T: ...
 
-def dot[T](vec1: Iterable[T], vec2: Iterable[T], /,) -> T:
+
+def dot[T](
+    vec1: Iterable[T],
+    vec2: Iterable[T],
+    /,
+) -> T:
     """
     Returns the dot product of two vectors.
 
@@ -77,4 +82,5 @@ def dot[T](vec1: Iterable[T], vec2: Iterable[T], /,) -> T:
     try:
         return functools.reduce(operator.add, [a * b for a, b in zip(vec1, vec2, strict=True)])
     except ValueError as e:
-        raise ValueError('Both vectors must have the same length') from e
+        msg = "Both vectors must have the same length"
+        raise ValueError(msg) from e

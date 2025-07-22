@@ -3,28 +3,48 @@ from typing import Sequence, Iterator, overload, Any
 import functools
 import operator
 
-import numpy as np
+
+@overload
+def sim_product[S, T, U, V, W](
+    iterable1: Sequence[S],
+    iterable2: Sequence[T],
+    iterable3: Sequence[U],
+    iterable4: Sequence[V],
+    iterable5: Sequence[W],
+    *,
+    stop: bool = True,
+) -> Iterator[tuple[S, T, U, V, W]]: ...
 
 
 @overload
-def sim_product[S, T, U, V, W](iterable1: Sequence[S], iterable2: Sequence[T], iterable3: Sequence[U], iterable4: Sequence[V], iterable5: Sequence[W], *, stop: bool = True) -> Iterator[tuple[S, T, U, V, W]]:
-    ...
+def sim_product[S, T, U, V](
+    iterable1: Sequence[S],
+    iterable2: Sequence[T],
+    iterable3: Sequence[U],
+    iterable4: Sequence[V],
+    *,
+    stop: bool = True,
+) -> Iterator[tuple[S, T, U, V]]: ...
+
 
 @overload
-def sim_product[S, T, U, V](iterable1: Sequence[S], iterable2: Sequence[T], iterable3: Sequence[U], iterable4: Sequence[V], *, stop: bool = True) -> Iterator[tuple[S, T, U, V]]:
-    ...
+def sim_product[S, T, U](
+    iterable1: Sequence[S],
+    iterable2: Sequence[T],
+    iterable3: Sequence[U],
+    *,
+    stop: bool = True,
+) -> Iterator[tuple[S, T, U]]: ...
+
 
 @overload
-def sim_product[S, T, U](iterable1: Sequence[S], iterable2: Sequence[T], iterable3: Sequence[U], *, stop: bool = True) -> Iterator[tuple[S, T, U]]:
-    ...
+def sim_product[S, T](
+    iterable1: Sequence[S], iterable2: Sequence[T], *, stop: bool = True
+) -> Iterator[tuple[S, T]]: ...
+
 
 @overload
-def sim_product[S, T](iterable1: Sequence[S], iterable2: Sequence[T], *, stop: bool = True) -> Iterator[tuple[S, T]]:
-    ...
-
-@overload
-def sim_product[S](iterable1: Sequence[S], *, stop: bool = True) -> Iterator[tuple[S,]]:
-    ...
+def sim_product[S](iterable1: Sequence[S], *, stop: bool = True) -> Iterator[tuple[S,]]: ...
 
 
 def sim_product(*args: Sequence, stop=True) -> Iterator[tuple]:
@@ -64,7 +84,7 @@ def sim_product(*args: Sequence, stop=True) -> Iterator[tuple]:
         index = 0
         args_len = len(args[0])
         while True:
-            yield args[0][index],  # Comma to make it a tuple
+            yield (args[0][index],)  # Comma to make it a tuple
             if stop and index == args_len - 1:
                 raise StopIteration
             index = (index + 1) % args_len
@@ -97,6 +117,7 @@ def sim_product(*args: Sequence, stop=True) -> Iterator[tuple]:
                 # We have looped through all the unique combinations, so we need to reset to the start
                 index, start, iters = 0, 0, 0
 
+
 def sim_product_list(*args: Sequence, num: int = None) -> list[tuple]:
     """
     Create a list of all the combinations of the given iterables. Uses `sim_product` to generate the combinations.
@@ -117,23 +138,27 @@ def sim_product_list(*args: Sequence, num: int = None) -> list[tuple]:
     if num is None:
         return list(sim_product(*args, stop=True))
     if not isinstance(num, int) or num < 1:
-        raise ValueError(f'`num` should be a positive integer or None, got {num}')
+        msg = f"`num` should be a positive integer or None, got {num}"
+        raise ValueError(msg)
     iterator = sim_product(*args, stop=False)
     return [tuple(next(iterator)) for _ in range(num)]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    import numpy as np
+
     num = 20
     for i in range(1, num):
-        print(f'test \r{i}/{num}', end='')
+        print(f"test \r{i}/{num}", end="")
         for j in range(1, num):
             for k in range(1, num):
                 try:
                     result = set(sim_product(np.arange(i), np.arange(j), np.arange(k)))
                 except Exception as e:
-                    raise Exception(f"Error: {i}, {j}, {k}") from e
+                    msg = f"Error: {i}, {j}, {k}"
+                    raise Exception(msg) from e
                 if len(result) != i * j * k:
-                    raise ValueError(f"{i} * {j} * {k} = {i * j * k}:\n"
-                                     f"S: {len(result)}, {result}\n")
-        print('\r', end='')
+                    msg = f"{i} * {j} * {k} = {i * j * k}:\nS: {len(result)}, {result}\n"
+                    raise ValueError(msg)
+        print("\r", end="")
     print("Test passed")

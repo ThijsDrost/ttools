@@ -2,7 +2,13 @@ from typing import Iterable
 
 from ._protecols import SupportsRichComparisonT
 
-def sort_by(sorter: Iterable[SupportsRichComparisonT], *to_sort: Iterable, key=None, reverse=False) -> tuple[tuple, ...]:
+
+def sort_by(
+    sorter: Iterable[SupportsRichComparisonT],
+    *to_sort: Iterable,
+    key=None,
+    reverse=False,
+) -> tuple[tuple, ...]:
     """
     Sort several sequences together based on a sorter sequence.
     """
@@ -10,7 +16,12 @@ def sort_by(sorter: Iterable[SupportsRichComparisonT], *to_sort: Iterable, key=N
     return values[1:]
 
 
-def sort_together(sorter: Iterable[SupportsRichComparisonT], *others: Iterable, key=None, reverse=False) -> tuple[tuple, ...]:
+def sort_together(
+    sorter: Iterable[SupportsRichComparisonT],
+    *others: Iterable,
+    key=None,
+    reverse=False,
+) -> tuple[tuple, ...]:
     if key is not None:
         key_sorter = lambda x: key(x[0])
     else:
@@ -18,9 +29,11 @@ def sort_together(sorter: Iterable[SupportsRichComparisonT], *others: Iterable, 
     try:
         zipped = zip(sorter, *others, strict=True)
     except ValueError as e:
-        raise ValueError('Could not zip the sequences together. Ensure they are of the same length.') from e
+        msg = "Could not zip the sequences together. Ensure they are of the same length."
+        raise ValueError(msg) from e
     try:
         sorted_values = sorted(zipped, key=key_sorter, reverse=reverse)
     except ValueError as e:
-        raise ValueError('Could not sort the values.') from e
+        msg = "Could not sort the values."
+        raise ValueError(msg) from e
     return tuple(zip(*sorted_values))
