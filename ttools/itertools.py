@@ -62,7 +62,7 @@ def sim_product(*args: Sequence, stop=True) -> Iterator[tuple]:
     stop: bool
         When true, the iterator loops back to the beginning when all possibilities have been yielded, thus it never
         stops.
-        When false, it will raise a StopIteration exception when all possibilities have been yielded.
+        When false, it will return when all possibilities have been yielded.
 
     Yields
     ------
@@ -91,7 +91,7 @@ def sim_product(*args: Sequence, stop=True) -> Iterator[tuple]:
         while True:
             yield (args[0][index],)  # Comma to make it a tuple
             if stop and index == args_len - 1:
-                raise StopIteration
+                return
             index = (index + 1) % args_len
     else:
         # More than one iterable, get the generator for the combinations of the first n-1 iterables
@@ -118,7 +118,7 @@ def sim_product(*args: Sequence, stop=True) -> Iterator[tuple]:
 
             if iters == reset_val:
                 if stop:
-                    raise StopIteration
+                    return
                 # We have looped through all the unique combinations, so we need to reset to the start
                 index, start, iters = 0, 0, 0
 
