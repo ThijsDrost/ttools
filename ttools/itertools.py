@@ -149,18 +149,22 @@ def sim_product_list(*args: Sequence, num: int | None = None) -> list[tuple]:
     return [tuple(next(iterator)) for _ in range(num)]
 
 
-if __name__ == "__main__":
-    import numpy as np
-
+def _test_sim_product():
     num = 20
     for i in range(1, num):
         for j in range(1, num):
             for k in range(1, num):
                 try:
-                    result = set(sim_product(np.arange(i), np.arange(j), np.arange(k)))
+                    result = set(x for x in sim_product(list(range(i)), list(range(j)), list(range(k))))
                 except Exception as e:
                     msg = f"Error: {i}, {j}, {k}"
                     raise ValueError(msg) from e
                 if len(result) != i * j * k:
                     msg = f"{i} * {j} * {k} = {i * j * k}:\nS: {len(result)}, {result}\n"
                     raise ValueError(msg)
+
+if __name__ == "__main__":
+    _test_sim_product()
+    print("All tests passed for sim_product.")
+
+# %%
