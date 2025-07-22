@@ -1,7 +1,8 @@
-import math
-from typing import Sequence, Iterator, overload, Any
 import functools
+import math
 import operator
+from collections.abc import Iterator, Sequence
+from typing import overload
 
 
 @overload
@@ -39,7 +40,10 @@ def sim_product[S, T, U](
 
 @overload
 def sim_product[S, T](
-    iterable1: Sequence[S], iterable2: Sequence[T], *, stop: bool = True
+    iterable1: Sequence[S],
+    iterable2: Sequence[T],
+    *,
+    stop: bool = True,
 ) -> Iterator[tuple[S, T]]: ...
 
 
@@ -56,7 +60,8 @@ def sim_product(*args: Sequence, stop=True) -> Iterator[tuple]:
     args:  Sequence
         The sequences to combine.
     stop: bool
-        When true, the iterator loops back to the beginning when all possibilities have been yielded, thus it never stops.
+        When true, the iterator loops back to the beginning when all possibilities have been yielded, thus it never
+        stops.
         When false, it will raise a StopIteration exception when all possibilities have been yielded.
 
     Yields
@@ -118,7 +123,7 @@ def sim_product(*args: Sequence, stop=True) -> Iterator[tuple]:
                 index, start, iters = 0, 0, 0
 
 
-def sim_product_list(*args: Sequence, num: int = None) -> list[tuple]:
+def sim_product_list(*args: Sequence, num: int | None = None) -> list[tuple]:
     """
     Create a list of all the combinations of the given iterables. Uses `sim_product` to generate the combinations.
 
@@ -149,16 +154,13 @@ if __name__ == "__main__":
 
     num = 20
     for i in range(1, num):
-        print(f"test \r{i}/{num}", end="")
         for j in range(1, num):
             for k in range(1, num):
                 try:
                     result = set(sim_product(np.arange(i), np.arange(j), np.arange(k)))
                 except Exception as e:
                     msg = f"Error: {i}, {j}, {k}"
-                    raise Exception(msg) from e
+                    raise ValueError(msg) from e
                 if len(result) != i * j * k:
                     msg = f"{i} * {j} * {k} = {i * j * k}:\nS: {len(result)}, {result}\n"
                     raise ValueError(msg)
-        print("\r", end="")
-    print("Test passed")

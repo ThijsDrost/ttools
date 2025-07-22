@@ -1,4 +1,4 @@
-from typing import Protocol, Any, TypeVar
+from typing import Any, Protocol, TypeVar
 
 
 class Addable[T](Protocol):

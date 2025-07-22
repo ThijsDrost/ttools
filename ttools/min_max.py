@@ -1,4 +1,6 @@
-from typing import Callable, Sequence, Iterable, Generator, Any, TypeVar
+from collections.abc import Callable, Generator, Iterable, Sequence
+from typing import Any, TypeVar
+
 from ._protecols import SupportsAllComparisonT
 
 T = TypeVar("T")
@@ -27,9 +29,8 @@ def _none_key(key: Callable[[T], Any], default: T) -> Callable[[T], SupportsAllC
 
 
 def _none_yielder(values: Iterable[T], key: Callable[[T], S], default: T) -> Generator[T | S, None, None]:
-    """
-    Yields values from the iterable, applying a key function if provided, while replacing None values with a default value.
-    """
+    """Yields values from the iterable, applying a key function if provided, while replacing None values with a
+    default value."""
     if key is None:
         for val in values:
             if val is None:
@@ -44,9 +45,10 @@ def _none_yielder(values: Iterable[T], key: Callable[[T], S], default: T) -> Gen
                 yield key(val)
 
 
-def arg_none_max(values: Sequence[T], *, key: Callable[[T], SupportsAllComparisonT] = None) -> int | None:
+def arg_none_max(values: Sequence[T], *, key: Callable[[T], SupportsAllComparisonT] | None = None) -> int | None:
     """
-    Returns the first index of the minimum value in the sequence, using the build-in `min` function, while ignoring None values.
+    Returns the first index of the minimum value in the sequence, using the build-in `min` function, while ignoring
+    None values.
 
     Parameters
     ----------
@@ -64,9 +66,10 @@ def arg_none_max(values: Sequence[T], *, key: Callable[[T], SupportsAllCompariso
     return _arg_none_minmax(max, values, float("-inf"), key=key)
 
 
-def arg_none_min(values: Sequence[T], *, key: Callable[[T], Any] = None) -> int | None:
+def arg_none_min(values: Sequence[T], *, key: Callable[[T], Any] | None = None) -> int | None:
     """
-    Returns the first index of the minimum value in the sequence, using the build-in `min` function, while ignoring None values.
+    Finds the first index of the minimum value in the sequence, using the build-in `min` function, while ignoring
+    None values.
 
     Parameters
     ----------
@@ -89,11 +92,11 @@ def _arg_none_minmax(
     values: Iterable[T],
     default: T,
     *,
-    key: Callable[[T], SupportsAllComparisonT] = None,
+    key: Callable[[T], SupportsAllComparisonT] | None = None,
 ) -> int | None:
     if not isinstance(values, Iterable):
         msg = "`values` must be an iterable"
-        raise ValueError(msg)
+        raise TypeError(msg)
 
     if isinstance(values, Iterable) and not isinstance(values, Sequence):
         max_val = default
@@ -114,17 +117,16 @@ def _arg_none_minmax(
         if res == default:
             return None
         return values.index(res)
-    else:
-        new_key = _none_key(key, default)
-        index = func(range(len(values)), key=new_key)
-        if values[index] is None:
-            return None
-        return index
+    new_key = _none_key(key, default)
+    index = func(range(len(values)), key=new_key)
+    if values[index] is None:
+        return None
+    return index
 
 
-def arg_max(values: Sequence[T], *, key: Callable[[T], SupportsAllComparisonT] = None) -> int:
+def arg_max(values: Sequence[T], *, key: Callable[[T], SupportsAllComparisonT] | None = None) -> int:
     """
-    Returns the first index of the minimum value in the sequence, using the build-in `min` function.
+    Finds the first index of the minimum value in the sequence, using the build-in `min` function.
 
     Parameters
     ----------
@@ -137,9 +139,9 @@ def arg_max(values: Sequence[T], *, key: Callable[[T], SupportsAllComparisonT] =
     return _argfunc(max, values, key=key)
 
 
-def arg_min(values: Sequence[T], *, key: Callable[[T], SupportsAllComparisonT] = None) -> int:
+def arg_min(values: Sequence[T], *, key: Callable[[T], SupportsAllComparisonT] | None = None) -> int:
     """
-    Returns the first index of the minimum value in the sequence, using the build-in `min` function.
+    Finds the first index of the minimum value in the sequence, using the build-in `min` function.
 
     Parameters
     ----------
@@ -161,20 +163,20 @@ def _argfunc(
     func: callable,
     values: Iterable[T],
     *,
-    key: Callable[[T], SupportsAllComparisonT] = None,
+    key: Callable[[T], SupportsAllComparisonT] | None = None,
 ) -> int:
     if not isinstance(values, Iterable):
         msg = "`values` should be an iterable"
         raise TypeError(msg)
     if isinstance(values, Sequence) and len(values) == 0:
         msg = "`values` should be non-empty"
-        raise ValueError()
+        raise ValueError
 
     if hasattr(values, "index"):
         return values.index(func(values, key=key))
-    elif isinstance(values, Sequence):
+    if isinstance(values, Sequence):
         return func(range(len(values)), key=values.__getitem__)
-    elif isinstance(values, Iterable):
+    if isinstance(values, Iterable):
         values_iter = iter(values)
         try:
             max_val = next(values_iter)
@@ -190,9 +192,8 @@ def _argfunc(
                 max_val = val
                 max_idx = index
         return max_idx
-    else:
-        msg = "`values` should be non-empty"
-        raise TypeError(msg)
+    msg = "`values` should be non-empty"
+    raise TypeError(msg)
 
 
 def _none_minmax(
@@ -200,7 +201,7 @@ def _none_minmax(
     values: Sequence[T],
     default: T,
     *,
-    key: Callable[[T], SupportsAllComparisonT] = None,
+    key: Callable[[T], SupportsAllComparisonT] | None = None,
 ) -> int | None:
     if not isinstance(values, Iterable):
         msg = "`values` should be a iterable"
@@ -216,9 +217,9 @@ def _none_minmax(
     return res
 
 
-def none_min(values: Sequence[T], *, key: Callable[[T], SupportsAllComparisonT] = None) -> T | None:
+def none_min(values: Sequence[T], *, key: Callable[[T], SupportsAllComparisonT] | None = None) -> T | None:
     """
-    Returns the minimum value in the sequence, ignoring None values.
+    Finds the minimum value in the sequence, ignoring None values.
 
     Parameters
     ----------
@@ -240,9 +241,9 @@ def none_min(values: Sequence[T], *, key: Callable[[T], SupportsAllComparisonT] 
     return _none_minmax(min, values, float("inf"), key=key)
 
 
-def none_max[T](values: Sequence[T], *, key: Callable[[T], Any] = None) -> T | None:
+def none_max[T](values: Sequence[T], *, key: Callable[[T], Any] | None = None) -> T | None:
     """
-    Returns the maximum value in the sequence, ignoring None values.
+    Finds the maximum value in the sequence, ignoring None values.
 
     Parameters
     ----------

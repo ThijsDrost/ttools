@@ -1,21 +1,20 @@
-from typing import Iterable, overload, Any
 import functools
-import operator
 import math
+import operator
+from collections.abc import Iterable
+from typing import Any, overload
 
 from _protecols import Addable
 
 
 def flatten_2D(value: Iterable[Iterable[Any]], /) -> list[Any]:
-    """
-    Flatten an iterator of iterators
-    """
+    """Flatten an iterator of iterators."""
     return [item for sublist in value for item in sublist]
 
 
 def flatten_iter(value: Iterable, /, *, max_dept=math.inf) -> Iterable:
     """
-    Flatten an arbitrary depth iterator
+    Flatten an arbitrary depth iterator.
 
     Parameters
     ----------
@@ -37,7 +36,7 @@ def flatten_iter(value: Iterable, /, *, max_dept=math.inf) -> Iterable:
 
 def flatten(value: Iterable, /, *, max_dept=math.inf) -> list:
     """
-    Flatten an arbitrary depth iterator
+    Flatten an arbitrary depth iterator.
 
     Parameters
     ----------
@@ -50,10 +49,8 @@ def flatten(value: Iterable, /, *, max_dept=math.inf) -> list:
 
 
 def transpose(iterable: Iterable[Iterable[Any]], /) -> list[list[Any]]:
-    """
-    Transpose an iterable of iterables.
-    """
-    return list(map(list, zip(*iterable)))
+    """Transpose an iterable of iterables."""
+    return list(map(list, zip(*iterable, strict=True)))
 
 
 @overload
@@ -70,7 +67,7 @@ def dot[T](
     /,
 ) -> T:
     """
-    Returns the dot product of two vectors.
+    Calculates the dot product of two vectors.
 
     Raises
     ------
