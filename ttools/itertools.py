@@ -155,6 +155,6 @@ def sim_product_list(*args: Sequence, num: int | None = None) -> list[tuple]:
         msg = f"`num` should be a positive integer or None, got {num}"
         raise ValueError(msg)
     iterator = sim_product(*args, stop=False)
-    return [tuple(next(iterator)) for _ in range(num)]
+    return [next(iterator) for _ in range(num)]
 
 # %%
