@@ -36,7 +36,7 @@ def flatten_iter(value: Iterable, /, *, max_dept=math.inf) -> Iterable:
 
 def flatten(value: Iterable, /, *, max_dept=math.inf) -> list:
     """
-    Flatten an arbitrary depth iterator.
+    Flatten an arbitrary depth iterator to a given depth.
 
     Parameters
     ----------
