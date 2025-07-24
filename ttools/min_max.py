@@ -170,7 +170,7 @@ def _argfunc(
         raise TypeError(msg)
     if isinstance(values, Sequence) and len(values) == 0:
         msg = "`values` should be non-empty"
-        raise ValueError
+        raise ValueError(msg)
 
     if hasattr(values, "index"):
         return values.index(func(values, key=key))
