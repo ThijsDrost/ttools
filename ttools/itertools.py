@@ -84,6 +84,15 @@ def sim_product(*args: Sequence, stop=True) -> Iterator[tuple]:
     >>> list(sim_product([0, 1], [0, 1, 2], [0, 1]))
     [(0, 0, 0), (1, 1, 1), (0, 2, 0), (1, 0, 1), (0, 1, 0), (1, 2, 1), (0, 0, 1), (1, 1, 0), (0, 2, 1), (1, 0, 0), (0, 1, 1), (1, 2, 0)]
     """
+    if any(zero_lengths := [len(arg) == 0 for arg in args]):
+        # If any iterable is empty, the product is empty
+        indexes = [i for i, zero in enumerate(zero_lengths) if zero]
+        if len(indexes) == 1:
+            mgs = f"Input sequence at index {indexes[0]} is empty, cannot compute product."
+        else:
+            mgs = f"Input sequences at indices {indexes} are empty, cannot compute product."
+        raise ValueError(mgs)
+
     if len(args) == 1:
         # Only one iterable, simply yield the values from that iterable
         index = 0
