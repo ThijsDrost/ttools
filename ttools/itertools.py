@@ -1,3 +1,8 @@
+"""
+Provides a custom implementation of the `product` function, which generates combinations of elements from
+multiple iterables.
+"""
+
 import functools
 import math
 import operator
@@ -156,5 +161,3 @@ def sim_product_list(*args: Sequence, num: int | None = None) -> list[tuple]:
         raise ValueError(msg)
     iterator = sim_product(*args, stop=False)
     return [next(iterator) for _ in range(num)]
-
-# %%
