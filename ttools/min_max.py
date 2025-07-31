@@ -18,13 +18,13 @@ def _none_key(key: Callable[[T], Any], default: T) -> Callable[[T], SupportsAllC
     """
     if key is None:
 
-        def new_key(x):
+        def new_key(x):  #noqa: ANN202
             if x is None:
                 return default
             return x
     else:
 
-        def new_key(x):
+        def new_key(x):  #noqa: ANN202
             if x is None:
                 return default
             return key(x)
