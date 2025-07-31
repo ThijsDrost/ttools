@@ -1,3 +1,7 @@
+"""
+Flattening and transposing utilities.
+"""
+
 import functools
 import math
 import operator
@@ -7,7 +11,7 @@ from typing import Any, overload
 from _protecols import Addable
 
 
-def flatten_2D(value: Iterable[Iterable[Any]], /) -> list[Any]:
+def flatten_2D(value: Iterable[Iterable[Any]], /) -> list[Any]:  #noqa: N802
     """Flatten an iterator of iterators."""
     return [item for sublist in value for item in sublist]
 
@@ -67,7 +71,7 @@ def dot[T](
     /,
 ) -> T:
     """
-    Calculates the dot product of two vectors.
+    Calculate the dot product of two vectors.
 
     Raises
     ------
