@@ -30,6 +30,8 @@ ignore = [
     "ANN001",
     "ANN205",
     "TRY003",
+    "D200",
+    "D205",
 ]
 
 [tool.ruff.lint.pydocstyle]
