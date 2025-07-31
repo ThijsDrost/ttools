@@ -1,3 +1,7 @@
+"""
+Sort sequences based on another sequence.
+"""
+
 from collections.abc import Iterable
 
 from ._protecols import SupportsRichComparisonT
@@ -20,6 +24,7 @@ def sort_together(
     key=None,
     reverse=False,
 ) -> tuple[tuple, ...]:
+    """Sort several sequences together based on the first sequence."""
     key_sorter = (lambda x: key(x[0])) if key is not None else (lambda x: x[0])
 
     try:
